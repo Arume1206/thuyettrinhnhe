@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap">
+<title>Núi Bà Đen – Bến Nhà Rồng – Vịnh Hạ Long | Nhóm 6</title>
+<style>
+:root{
+  --bg:#4A0B10;
+  --bg2:#2E0609;
+  --red:#FF8A7A;
+  --ivory:#FFF6E9;
+  --gold:#F0C674;
+  --gray:#E8C3BA;
+  --serif:"Playfair Display","Times New Roman",serif;
+  --sans:"Be Vietnam Pro","Segoe UI",Arial,sans-serif;
+  --s:1;
+  --mx:640px;
+  --my:360px;
+  --px:0;
+  --py:0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#1a0305;overflow:hidden;font-family:var(--sans);color:var(--ivory);user-select:none}
+#stage{
+  position:absolute;left:50%;top:50%;width:1280px;height:720px;
+  transform:translate(-50%,-50%) scale(var(--s));
+  background:radial-gradient(ellipse at 50% 35%,#6E141C,#4A0B10 65%,#280407);
+  overflow:hidden;cursor:pointer;
+  box-shadow:0 20px 60px rgba(0,0,0,.75);
+}
+
+/* Hiệu ứng ánh sáng dịu đi theo chuột */
+#cursor-glow{
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(320px circle at var(--mx) var(--my), rgba(240,198,116,.13), rgba(255,138,122,.04) 45%, transparent 70%);
+  transition:opacity .3s;
+}
+
+.slide{
+  position:absolute;inset:0;padding:42px 68px 86px;
+  opacity:0;visibility:hidden;transform:translateX(28px);
+  transition:opacity .5s cubic-bezier(.2,.8,.2,1),transform .5s cubic-bezier(.2,.8,.2,1),visibility .5s;
+  display:flex;flex-direction:column;
+}
+.slide.on{opacity:1;visibility:visible;transform:none}
+.slide.past{transform:translateX(-28px)}
+
+/* Lớp nền SVG và Ảnh thực tế */
+.scene,.ph,.trio-bg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.scene{opacity:.16}
+.ph{
+  background-size:cover;background-position:center;
+  opacity:.42;
+  transform:translate3d(calc(var(--px) * -10px), calc(var(--py) * -10px), 0) scale(1.05);
+  transition:transform .25s ease-out, filter .6s ease;
+}
+/* Lớp phủ làm dịu và đồng bộ màu ảnh nền */
+.slide:before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(105deg, rgba(38,5,8,.92) 0%, rgba(56,9,14,.82) 52%, rgba(38,5,8,.68) 100%);
+}
+.slide:after{
+  content:"";position:absolute;left:0;top:44px;width:8px;height:92px;
+  background:linear-gradient(180deg,var(--gold),var(--red));
+  box-shadow:0 0 16px rgba(240,198,116,.4);z-index:2;
+}
+.slide>*{position:relative;z-index:3}
+.slide>.scene,.slide>.ph,.slide>.trio-bg{position:absolute;z-index:0}
+
+/* Ghép 3 ảnh thực tế cho Slide Mở đầu, Slide Nhóm & Slide Cảm ơn */
+.trio-bg{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  opacity:.45;
+  transform:translate3d(calc(var(--px) * -8px), calc(var(--py) * -8px), 0) scale(1.04);
+  transition:transform .25s ease-out;
+}
+.trio-bg div{
+  background-size:cover;background-position:center;
+  filter:saturate(1.1) contrast(1.05);
+  border-right:1px solid rgba(240,198,116,.2);
+}
+
+/* Tiêu đề & Nội dung */
+.k{
+  color:var(--gold);font-size:20px;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;margin:0 0 6px;display:flex;align-items:center;gap:12px;
+}
+.k:after{content:"";height:2px;width:54px;background:var(--red)}
+h1{font:700 44px/1.22 var(--serif);margin:0 0 18px;padding-right:180px;text-shadow:0 4px 16px rgba(0,0,0,.45)}
+
+.body{flex:1;display:flex;gap:34px;align-items:stretch;min-height:0}
+ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;justify-content:center;gap:14px;flex:1}
+li{
+  font-size:24px;line-height:1.4;padding:12px 18px 12px 30px;position:relative;
+  background:rgba(46,7,10,.55);border:1px solid rgba(240,198,116,.14);
+  border-radius:10px;backdrop-filter:blur(4px);
+  transition:transform .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+li:hover{
+  transform:translateX(8px);
+  background:rgba(76,13,18,.78);
+  border-color:rgba(240,198,116,.45);
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+li:before{
+  content:"";position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  width:9px;height:9px;border-radius:2px;background:var(--red);
+  box-shadow:0 0 8px var(--red);
+}
+li b{color:var(--gold)}
+
+/* Cột phải: Khung ảnh thực tế + Thẻ số liệu */
+.right-col{
+  width:440px;flex:none;display:flex;flex-direction:column;justify-content:center;gap:14px;
+}
+.pic-frame{
+  position:relative;width:100%;height:230px;border-radius:14px;overflow:hidden;
+  border:1.5px solid rgba(240,198,116,.45);
+  box-shadow:0 14px 32px rgba(0,0,0,.55);
+  background:#220406;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s ease, box-shadow .35s ease;
+}
+.pic-frame.tall{height:275px}
+.pic-frame:hover{
+  transform:translateY(-4px) scale(1.015);
+  border-color:var(--gold);
+  box-shadow:0 18px 38px rgba(0,0,0,.7), 0 0 20px rgba(240,198,116,.22);
+}
+.pic-frame img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .6s cubic-bezier(.2,.8,.2,1), filter .4s ease;
+}
+.pic-frame:hover img{transform:scale(1.07)}
+.pic-cap{
+  position:absolute;left:0;right:0;bottom:0;padding:24px 14px 10px;
+  background:linear-gradient(transparent, rgba(20,3,5,.9));
+  font-size:15px;color:var(--ivory);display:flex;align-items:center;justify-content:space-between;
+}
+.pic-cap span{
+  background:rgba(240,198,116,.2);border:1px solid rgba(240,198,116,.5);
+  color:var(--gold);padding:2px 9px;border-radius:99px;font-size:13px;font-weight:600;
+}
+
+.cards{
+  display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;
+}
+.cd{
+  background:rgba(58,9,13,.82);border-left:4px solid var(--red);
+  border-top:1px solid rgba(240,198,116,.18);border-right:1px solid rgba(240,198,116,.18);border-bottom:1px solid rgba(240,198,116,.18);
+  border-radius:0 10px 10px 0;padding:11px 16px;backdrop-filter:blur(6px);
+  transition:transform .25s ease, border-color .25s ease, background .25s ease;
+}
+.cd:hover{
+  transform:translateY(-3px);
+  background:rgba(82,14,20,.92);
+  border-left-color:var(--gold);
+}
+.cd b{display:block;font:700 30px/1.18 var(--serif);color:var(--gold);margin-bottom:3px}
+.cd span{font-size:17px;color:var(--ivory);line-height:1.3;display:block}
+
+/* Hiệu ứng xuất hiện khi chuyển slide */
+.on li,.on .cd,.on .pic-frame,.on .team-box,.on .m-card{
+  animation:fup .65s cubic-bezier(.2,.8,.2,1) backwards;
+  animation-delay:var(--d,0s);
+}
+.on h1{animation:fup .65s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes fup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* Slide Cover & Intro */
+.slide.cover,.slide.intro{align-items:center;justify-content:center;text-align:center}
+.cover:after,.intro:after{display:none}
+.cover:before{
+  background:linear-gradient(180deg, rgba(25,4,6,.3) 0%, rgba(32,5,8,.55) 45%, rgba(30,4,7,.92) 100%);
+}
+.intro:before{
+  background:radial-gradient(circle at 50% 35%, rgba(60,10,14,.55), rgba(28,4,7,.92) 75%);
+}
+.cover .ph{opacity:.88;filter:contrast(1.06) saturate(1.12)}
+.cover .k{justify-content:center;font-size:24px;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.cover .k:after{display:none}
+.cover h1{font-size:80px;padding:0;margin:6px 0 12px;text-shadow:0 6px 28px rgba(0,0,0,.75)}
+.cover .sub,.intro .sub{font-size:28px;color:var(--gray);text-shadow:0 2px 14px rgba(0,0,0,.75)}
+.cover{justify-content:flex-end;padding-bottom:118px}
+.cover-thumbs{
+  display:flex;gap:14px;margin-top:22px;justify-content:center;
+}
+.cover-thumbs img{
+  width:136px;height:80px;object-fit:cover;border-radius:8px;
+  border:1.5px solid rgba(240,198,116,.6);box-shadow:0 8px 20px rgba(0,0,0,.6);
+  transition:transform .3s ease, border-color .3s ease;
+}
+.cover-thumbs img:hover{transform:translateY(-5px) scale(1.06);border-color:#fff}
+
+.intro{justify-content:flex-end;padding-bottom:108px}
+.intro h1{font-size:52px;padding:0;margin:0 0 12px;max-width:1100px}
+.rule{width:320px;height:2px;margin:0 auto 16px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* Slide Nhóm 6 (Slide thứ 2) */
+.team-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px}
+.team-top{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  background:linear-gradient(90deg, rgba(72,12,18,.88), rgba(48,8,12,.75));
+  border:1px solid rgba(240,198,116,.38);border-left:6px solid var(--gold);
+  border-radius:12px;padding:16px 26px;backdrop-filter:blur(8px);
+  box-shadow:0 10px 28px rgba(0,0,0,.4);
+}
+.team-top .gv-label{font-size:16px;text-transform:uppercase;letter-spacing:.1em;color:var(--gray);margin-bottom:4px}
+.team-top .gv-name{font:700 30px/1.2 var(--serif);color:var(--gold)}
+.team-top .badge-count{
+  background:rgba(240,198,116,.16);border:1.5px solid var(--gold);
+  color:var(--ivory);padding:10px 22px;border-radius:99px;font-size:20px;font-weight:600;
+}
+.team-top .badge-count b{color:var(--gold);font-size:24px}
+
+.members-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:22px}
+.m-card{
+  background:rgba(48,8,12,.82);border:1px solid rgba(240,198,116,.28);
+  border-radius:14px;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 12px 28px rgba(0,0,0,.45);
+  transition:transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s ease, box-shadow .3s ease;
+}
+.m-card:hover{
+  transform:translateY(-6px);border-color:var(--gold);
+  box-shadow:0 18px 36px rgba(0,0,0,.65), 0 0 18px rgba(240,198,116,.2);
+}
+.m-banner{height:135px;position:relative;overflow:hidden}
+.m-banner img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.m-card:hover .m-banner img{transform:scale(1.08)}
+.m-banner:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(transparent 30%, rgba(48,8,12,.95));
+}
+.m-part{
+  position:absolute;top:10px;left:12px;z-index:1;
+  background:rgba(30,4,7,.8);border:1px solid rgba(240,198,116,.5);
+  color:var(--gold);font-size:13px;font-weight:600;padding:3px 10px;border-radius:99px;
+}
+.m-info{padding:14px 20px 20px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.m-num{font-size:14px;color:var(--red);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.m-name{font:700 26px/1.25 var(--serif);color:var(--ivory);margin:4px 0 10px}
+.m-mssv{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(240,198,116,.12);border:1px solid rgba(240,198,116,.35);
+  padding:6px 14px;border-radius:8px;font-size:18px;color:var(--ivory);width:fit-content;
+}
+.m-mssv b{color:var(--gold);letter-spacing:.04em}
+
+/* Logo TDT 3D xoay trái phải */
+#logo{
+  position:absolute;z-index:8;right:50px;top:26px;width:150px;height:96px;
+  perspective:900px;pointer-events:none;--dz:1.1px;
+  transition:right 1s cubic-bezier(.2,.8,.2,1),top 1s cubic-bezier(.2,.8,.2,1),width 1s cubic-bezier(.2,.8,.2,1),height 1s cubic-bezier(.2,.8,.2,1);
+}
+#logo.big{right:calc(50% - 235px);top:68px;width:470px;height:300px;--dz:3.4px}
+#rot{position:absolute;inset:0;transform-style:preserve-3d;animation:sw 6s ease-in-out infinite alternate}
+#rot svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#rot svg.b{filter:brightness(.55)}
+#logo.big #rot{filter:drop-shadow(0 18px 24px rgba(0,0,0,.55))}
+@keyframes sw{from{transform:rotateY(-40deg)}to{transform:rotateY(40deg)}}
+
+#glow{
+  position:absolute;left:50%;top:210px;width:560px;height:560px;margin:-280px;
+  border-radius:50%;background:radial-gradient(circle,rgba(255,214,140,.35),transparent 65%);
+  opacity:0;transition:opacity 1s;z-index:1;pointer-events:none;
+}
+#stage.bigl #glow{opacity:1}
+
+/* Thanh điều khiển & Số lượng slide */
+#bar{
+  position:absolute;left:0;bottom:0;height:4px;
+  background:linear-gradient(90deg,var(--red),var(--gold));
+  width:0;transition:width .4s;z-index:12;box-shadow:0 0 12px var(--gold);
+}
+#ctl{
+  position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:12;
+  display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:999px;
+  background:rgba(32,5,8,.78);border:1px solid rgba(240,198,116,.4);
+  backdrop-filter:blur(10px);cursor:default;transition:opacity .4s, transform .25s;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+#ctl:hover{border-color:var(--gold)}
+#ctl button{
+  width:40px;height:40px;border:0;border-radius:50%;background:transparent;
+  color:var(--ivory);cursor:pointer;display:grid;place-items:center;padding:0;
+  transition:background .2s, color .2s, transform .2s;
+}
+#ctl svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#ctl button:hover,#ctl button:focus-visible{background:rgba(240,198,116,.22);color:var(--gold);transform:scale(1.08);outline:none}
+#cnt{min-width:115px;text-align:center;font:700 20px var(--sans);font-variant-numeric:tabular-nums;color:var(--gold)}
+#cnt span{color:var(--gray);font-weight:400;font-size:17px}
+#stage.idle #ctl{opacity:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a0a18"/><stop offset=".6" stop-color="#b8531f"/><stop offset="1" stop-color="#f0c674"/></linearGradient>
+<linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0a2e"/><stop offset=".65" stop-color="#c2362b"/><stop offset="1" stop-color="#ffb36b"/></linearGradient>
+<linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a1030"/><stop offset=".55" stop-color="#e0702b"/><stop offset="1" stop-color="#ffd98a"/></linearGradient>
+<g id="sc1"><rect width="1280" height="720" fill="url(#g1)"/><circle cx="930" cy="250" r="70" fill="#ffe3a0" opacity=".9"/>
+<path d="M0 520 Q200 440 400 500 T800 480 T1280 500 V720 H0Z" fill="#6b2a1a" opacity=".7"/>
+<path d="M330 600 L560 330 L640 290 L720 250 L760 290 L1000 600Z" fill="#3b0d14"/></g>
+<g id="sc2"><rect width="1280" height="720" fill="url(#g2)"/><circle cx="1000" cy="190" r="56" fill="#fff0c2" opacity=".85"/>
+<rect x="380" y="380" width="500" height="150" fill="#3a0f12"/><polygon points="360,380 630,290 900,380" fill="#2a0a0c"/></g>
+<g id="sc3"><rect width="1280" height="720" fill="url(#g3)"/><circle cx="640" cy="330" r="80" fill="#fff3c4" opacity=".9"/>
+<path d="M200 480 L280 330 L330 340 L400 480Z M520 480 L580 300 L640 320 L720 480Z" fill="#3a0f1c"/></g>
+</defs></svg>
+
+<div id="stage">
+  <div id="glow"></div>
+  <div id="cursor-glow"></div>
+  <div id="logo"><div id="rot"></div></div>
+  <div id="bar"></div>
+  <div id="ctl">
+    <button id="prev" aria-label="Slide trước"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div id="cnt">1 <span>/ 15</span></div>
+    <button id="next" aria-label="Slide sau"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <button id="fs" aria-label="Toàn màn hình"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  </div>
+</div>
+
+<script>
+const D=[
+  /* Slide 1: Mở đầu */
+  {
+    t:"intro",
+    h:"Núi Bà Đen – Bến Nhà Rồng – Vịnh Hạ Long",
+    s:"Thuyết trình nhóm 6 · Đại học Tôn Đức Thắng",
+    sc:3,big:1,trio:1
+  },
+
+  /* Slide 2: Giới thiệu thành viên Nhóm 6 & Giảng viên */
+  {
+    t:"team",
+    k:"Giới thiệu nhóm thuyết trình",
+    h:"Danh sách thành viên Nhóm 6",
+    sc:1,trio:1,
+    gv:"Phạm Quốc Duy",
+    members:[
+      {name:"Huỳnh Minh Khải",mssv:"C2600046",role:"Phần 1 · Núi Bà Đen",img:"NuiBaDen2.png"},
+      {name:"Đỗ Minh Toàn",mssv:"C2600127",role:"Phần 2 · Bến Nhà Rồng",img:"BenNhaRong2.png"},
+      {name:"Mai Xuân Khánh",mssv:"2600053",role:"Phần 3 · Vịnh Hạ Long",img:"VinhHaLong.png"}
+    ]
+  },
+
+  /* PHẦN 1: NÚI BÀ ĐEN */
+  {
+    t:"cover",sc:1,
+    bg:"NuiBaDen2.png",bgPos:"center 40%",
+    thumbs:["NuiBaDen.png","NuiBaDen2.png","NuiBaDen3.png"],
+    k:"Phần 1 · Tây Ninh",
+    h:"Núi Bà Đen",
+    s:"“Nóc nhà Nam Bộ” giữa đồng bằng"
+  },
+  {
+    sc:1,k:"Núi Bà Đen",h:"Vị trí và đặc điểm tự nhiên",
+    bg:"NuiBaDen2.png",
+    img:"NuiBaDen2.png",imgPos:"center 45%",cap:"Toàn cảnh đỉnh Núi Bà Đen nhìn từ trên cao",tag:"Tây Ninh",
+    l:[
+      "Thuộc tỉnh Tây Ninh, nằm giữa vùng đồng bằng Nam Bộ",
+      "Cao khoảng <b>986 m</b>, là ngọn núi cao nhất Nam Bộ",
+      "Đứng độc lập giữa đồng bằng, có rừng nguyên sinh, hang động, đá tảng",
+      "Khí hậu mát mẻ hơn vùng đồng bằng xung quanh"
+    ],
+    c:[["986 m","Cao nhất Nam Bộ"],["> 100 km","Cách TP.HCM hướng tây bắc"]]
+  },
+  {
+    sc:1,k:"Núi Bà Đen",h:"Truyền thuyết và tín ngưỡng",
+    bg:"NuiBaDen.png",
+    img:"NuiBaDen.png",imgPos:"center 25%",cap:"Tượng Phật Bà Tây Bổ Đà Sơn giữa biển mây",tag:"Tâm linh",
+    l:[
+      "Bà Đen – <b>Lý Thị Thiên Hương</b>: người con gái chung thủy, được thờ là Linh Sơn Thánh Mẫu",
+      "Ba cụm chùa trên núi: chùa Hang, chùa Trung, chùa Bà (Linh Sơn Tiên Thạch tự)",
+      "Lễ hội Vía Bà, chính hội khoảng ngày <b>5 tháng Giêng</b>, hàng chục vạn người hành hương",
+      "Phật giáo hòa quyện với tín ngưỡng thờ Mẫu của người Việt"
+    ],
+    c:[["Chùa Hang","Chùa Trung · Chùa Bà"],["5 tháng Giêng","Chính hội Vía Bà"]]
+  },
+  {
+    sc:1,k:"Núi Bà Đen",h:"Giá trị lịch sử và du lịch hiện đại",
+    bg:"NuiBaDen3.png",
+    img:"NuiBaDen3.png",imgPos:"center 50%",cap:"Quần thể kiến trúc tâm linh lung linh về đêm",tag:"72m · Kỷ lục",
+    l:[
+      "Từng giữ vị trí chiến lược trong các cuộc kháng chiến",
+      "Cáp treo hiện đại, đường bộ và đường leo núi lên đỉnh",
+      "Tượng Phật Bà Tây Bổ Đà Sơn cao <b>72 m</b> trên đỉnh núi",
+      "Đặc sản nổi tiếng: bánh tráng phơi sương, muối tôm Tây Ninh"
+    ],
+    c:[["2020","Di tích quốc gia đặc biệt"],["2022","Khu du lịch quốc gia"]]
+  },
+
+  /* PHẦN 2: BẾN NHÀ RỒNG */
+  {
+    t:"cover",sc:2,
+    bg:"BenNhaRong2.png",bgPos:"center 55%",
+    thumbs:["BenNhaRong.png","BenNhaRong2.png"],
+    k:"Phần 2 · TP. Hồ Chí Minh",
+    h:"Bến Nhà Rồng",
+    s:"Điểm khởi đầu hành trình tìm đường cứu nước"
+  },
+  {
+    sc:2,k:"Bến Nhà Rồng",h:"Vị trí, lịch sử và kiến trúc",
+    bg:"BenNhaRong.png",
+    img:"BenNhaRong.png",imgPos:"center 45%",cap:"Kiến trúc Bến Nhà Rồng bên bờ sông Sài Gòn",tag:"1862–1863",
+    l:[
+      "Số 1 Nguyễn Tất Thành, bên bờ sông Sài Gòn, khu vực Khánh Hội",
+      "Xây dựng khoảng <b>1862–1863</b>, trụ sở Công ty vận tải biển Messageries Maritimes",
+      "Tên “Nhà Rồng” bắt nguồn từ hai con rồng trang trí trên mái",
+      "Kiến trúc phương Tây kết hợp hài hòa trang trí phương Đông"
+    ],
+    c:[["1862–1863","Xây dựng thời Pháp thuộc"],["2 con rồng","Chầu mặt trăng trên mái"]]
+  },
+  {
+    sc:2,k:"Bến Nhà Rồng",h:"Sự kiện lịch sử ngày 5/6/1911",
+    bg:"BenNhaRong2.png",
+    img:"BenNhaRong2.png",imgPos:"center 62%",cap:"Bến cảng lịch sử bên dòng sông Sài Gòn rực sáng",tag:"5/6/1911",
+    l:[
+      "Đất nước chịu ách thực dân, các phong trào yêu nước lần lượt thất bại",
+      "Nguyễn Tất Thành lấy tên <b>Văn Ba</b>, làm phụ bếp trên tàu Amiral Latouche-Tréville",
+      "Bắt đầu hành trình bôn ba hơn 30 năm qua nhiều châu lục",
+      "Ý nghĩa: điểm khởi đầu của hành trình tìm đường cứu nước"
+    ],
+    c:[["5/6/1911","Ngày Người xuống tàu ra đi"],["30+ năm","Bôn ba tìm đường cứu nước"]]
+  },
+  {
+    sc:2,k:"Bến Nhà Rồng",h:"Vai trò và giá trị ngày nay",
+    bg:"BenNhaRong.png",
+    img:"BenNhaRong.png",imgPos:"right 50%",cap:"Bảo tàng Hồ Chí Minh – Chi nhánh TP. Hồ Chí Minh",tag:"Di tích quốc gia",
+    l:[
+      "Bảo tàng Hồ Chí Minh – Chi nhánh Thành phố Hồ Chí Minh",
+      "Trưng bày hiện vật, hình ảnh, tư liệu về cuộc đời và sự nghiệp Chủ tịch Hồ Chí Minh",
+      "Địa chỉ giáo dục truyền thống cho người dân, học sinh, sinh viên, du khách",
+      "Chứng nhân lịch sử, biểu tượng của khát vọng độc lập, tự do"
+    ],
+    c:[["1979","Hoạt động như bảo tàng"],["1990","Xếp hạng di tích quốc gia"]]
+  },
+
+  /* PHẦN 3: VỊNH HẠ LONG */
+  {
+    t:"cover",sc:3,
+    bg:"VinhHaLong.png",bgPos:"center 50%",
+    thumbs:["VinhHaLong.png","VinhHaLong2.png"],
+    k:"Phần 3 · Quảng Ninh",
+    h:"Vịnh Hạ Long",
+    s:"Kỳ quan thiên nhiên được thế giới công nhận"
+  },
+  {
+    sc:3,k:"Vịnh Hạ Long",h:"Vị trí và quy mô",
+    bg:"VinhHaLong.png",
+    img:"VinhHaLong.png",imgPos:"center 55%",cap:"Hàng nghìn đảo đá vôi nhô lên giữa làn nước ngọc bích",tag:"Quảng Ninh",
+    l:[
+      "Thuộc tỉnh Quảng Ninh, vùng Đông Bắc Việt Nam",
+      "Gần 2.000 đảo đá vôi nhô lên giữa mặt nước biển xanh",
+      "Phần di sản thế giới rộng khoảng <b>434 km²</b>, có vùng đệm bao quanh",
+      "Tên gọi “Hạ Long” mang ý nghĩa là “rồng xuống”"
+    ],
+    c:[["1.969","Hòn đảo đá vôi"],["434 km²","Diện tích di sản thế giới"]]
+  },
+  {
+    sc:3,k:"Vịnh Hạ Long",h:"Giá trị thiên nhiên và di sản",
+    bg:"VinhHaLong2.png",
+    img:"VinhHaLong2.png",imgPos:"center 50%",cap:"Hòn Gà Chọi (Hòn Trống Mái) – Biểu tượng của Vịnh Hạ Long",tag:"UNESCO",
+    l:[
+      "Địa hình karst hình thành qua hàng trăm triệu năm dưới tác động của nước và gió",
+      "Hang Sửng Sốt, động Thiên Cung, hang Đầu Gỗ; Hòn Gà Chọi, Hòn Đỉnh Hương",
+      "Hệ sinh thái đa dạng: rừng ngập mặn, rạn san hô, nhiều loài động thực vật",
+      "Được UNESCO nhiều lần vinh danh là Di sản thiên nhiên thế giới"
+    ],
+    c:[["1994 · 2000","Di sản thiên nhiên UNESCO"],["2012 · 2023","Kỳ quan mới · Mở rộng Cát Bà"]]
+  },
+  {
+    sc:3,k:"Vịnh Hạ Long",h:"Truyền thuyết, du lịch và bảo tồn",
+    bg:"VinhHaLong.png",
+    img:"VinhHaLong.png",imgPos:"center 70%",cap:"Du thuyền truyền thống trên vùng di sản Vịnh Hạ Long",tag:"Du lịch bền vững",
+    l:[
+      "Rồng mẹ và đàn rồng con nhả châu ngọc, hóa thành các đảo đá chắn giặc",
+      "Làng chài Cửa Vạn, Vung Viêng; dấu tích văn hóa Hạ Long thời tiền sử",
+      "Du thuyền, chèo kayak, tham quan hang động, ngủ đêm trên vịnh",
+      "Thách thức: ô nhiễm, lượng khách lớn, biến đổi khí hậu → phát triển du lịch bền vững"
+    ],
+    c:[["Bảo tồn","Tài sản quý giá của Việt Nam và nhân loại"]]
+  },
+
+  /* Slide 15: Kết thúc */
+  {
+    t:"intro",
+    h:"Xin cảm ơn thầy và các bạn đã lắng nghe",
+    s:"Nhóm 6 · Giảng viên: Phạm Quốc Duy · Đại học Tôn Đức Thắng",
+    sc:3,big:1,trio:1
+  }
+];
+
+const $=id=>document.getElementById(id),stage=$("stage"),logo=$("logo"),rot=$("rot");
+
+/* Logo TDT 3D: xếp nhiều lớp SVG theo trục Z để tạo độ dày */
+const LG='<svg viewBox="0 0 330 190"><path fill="#1b75bc" d="M28 104H138L150 78H40ZM74 104H104L90 166H60Z"/><path fill="#1b75bc" d="M182 50H292L304 24H194ZM228 50H258L244 128H214Z"/><path fill="#e2452e" d="M120 64H196Q232 64 226 100Q218 150 176 150H96L104 124H170Q192 124 196 100Q198 92 184 92H112Z"/></svg>';
+for(let i=11;i>=0;i--){
+  const w=document.createElement("div");
+  w.innerHTML=LG;
+  const s=w.firstChild;
+  s.style.transform="translateZ(calc("+i+" * var(--dz) * -1))";
+  if(i)s.classList.add("b");
+  rot.appendChild(s);
+}
+
+const els=[];
+D.forEach((d)=>{
+  const e=document.createElement("section");
+  e.className="slide "+(d.t||"");
+
+  let bg='<svg class="scene" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice"><use href="#sc'+d.sc+'"/></svg>';
+  if(d.trio){
+    bg+='<div class="trio-bg">'
+      +'<div style="background-image:url(\'NuiBaDen2.png\')"></div>'
+      +'<div style="background-image:url(\'BenNhaRong2.png\')"></div>'
+      +'<div style="background-image:url(\'VinhHaLong.png\')"></div>'
+      +'</div>';
+  } else if(d.bg){
+    bg+='<div class="ph" style="background-image:url(\''+d.bg+'\');background-position:'+(d.bgPos||'center')+'"></div>';
+  }
+
+  let h=bg;
+  if(d.t==="intro"){
+    h+='<div class="rule"></div><h1>'+d.h+'</h1><div class="sub">'+d.s+'</div>';
+  } else if(d.t==="team"){
+    h+='<div class="k">'+d.k+'</div><h1>'+d.h+'</h1>'
+      +'<div class="team-wrap">'
+      +  '<div class="team-top" style="--d:.12s">'
+      +    '<div><div class="gv-label">Giảng viên hướng dẫn</div><div class="gv-name">'+d.gv+'</div></div>'
+      +    '<div class="badge-count">Nhóm <b>6</b> &nbsp;·&nbsp; <b>03</b> Thành viên</div>'
+      +  '</div>'
+      +  '<div class="members-grid">'
+      +  d.members.map((m,j)=>(
+           '<div class="m-card" style="--d:'+(.24+j*.14)+'s">'
+          +  '<div class="m-banner"><span class="m-part">'+m.role+'</span><img src="'+m.img+'" alt="'+m.name+'"></div>'
+          +  '<div class="m-info">'
+          +    '<div><div class="m-num">Thành viên 0'+(j+1)+'</div><div class="m-name">'+m.name+'</div></div>'
+          +    '<div class="m-mssv">MSSV: <b>'+m.mssv+'</b></div>'
+          +  '</div>'
+          +'</div>'
+         )).join("")
+      +  '</div>'
+      +'</div>';
+  } else if(d.t==="cover"){
+    h+='<div class="k">'+d.k+'</div><h1>'+d.h+'</h1><div class="sub">'+d.s+'</div>';
+    if(d.thumbs){
+      h+='<div class="cover-thumbs">'+d.thumbs.map(t=>'<img src="'+t+'" alt="">').join("")+'</div>';
+    }
+  } else {
+    h+='<div class="k">'+d.k+'</div><h1>'+d.h+'</h1>'
+      +'<div class="body">'
+      +  '<ul>'+d.l.map((x,j)=>'<li style="--d:'+(.12+j*.1)+'s">'+x+'</li>').join("")+'</ul>'
+      +  '<div class="right-col">'
+      +    (d.img ? '<div class="pic-frame'+(d.c.length===1?' tall':'')+'" style="--d:.22s"><img src="'+d.img+'" style="object-position:'+(d.imgPos||'center')+'" alt=""><div class="pic-cap">'+d.cap+'<span>'+d.tag+'</span></div></div>' : '')
+      +    '<div class="cards">'+d.c.map((x,j)=>'<div class="cd" style="--d:'+(.34+j*.12)+'s"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join("")+'</div>'
+      +  '</div>'
+      +'</div>';
+  }
+
+  e.innerHTML=h;
+  stage.insertBefore(e,logo);
+  els.push(e);
+});
+
+let cur=0;
+const N=D.length;
+function go(n){
+  cur=Math.max(0,Math.min(N-1,n));
+  els.forEach((e,i)=>{
+    e.classList.toggle("on",i===cur);
+    e.classList.toggle("past",i<cur);
+  });
+  const big=!!D[cur].big;
+  logo.classList.toggle("big",big);
+  stage.classList.toggle("bigl",big);
+  $("cnt").innerHTML=(cur+1)+" <span>/ "+N+" (slide)</span>";
+  $("bar").style.width=((cur+1)/N*100)+"%";
+  if(history.replaceState)history.replaceState(null,"","#"+(cur+1));
+}
+
+const next=()=>go(cur+1),prev=()=>go(cur-1);
+$("next").onclick=e=>{e.stopPropagation();next()};
+$("prev").onclick=e=>{e.stopPropagation();prev()};
+$("fs").onclick=e=>{
+  e.stopPropagation();
+  document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
+};
+
+stage.addEventListener("click",e=>{
+  if(!e.target.closest("#ctl"))next();
+});
+
+addEventListener("keydown",e=>{
+  if(["ArrowRight","PageDown"," ","Enter"].includes(e.key)){e.preventDefault();next()}
+  else if(["ArrowLeft","PageUp","Backspace"].includes(e.key)){e.preventDefault();prev()}
+  else if(e.key==="Home")go(0);
+  else if(e.key==="End")go(N-1);
+  else if(e.key==="f"||e.key==="F")$("fs").click();
+});
+
+function fit(){
+  document.documentElement.style.setProperty("--s",Math.min(innerWidth/1280,innerHeight/720));
+}
+addEventListener("resize",fit);
+fit();
+
+/* Hiệu ứng rê chuột: ánh sáng dịu + parallax nhẹ + tự ẩn thanh công cụ khi ngừng di chuột */
+let it;
+const wake=e=>{
+  stage.classList.remove("idle");
+  clearTimeout(it);
+  it=setTimeout(()=>stage.classList.add("idle"),2800);
+  if(e){
+    const r=stage.getBoundingClientRect();
+    const s=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--s"))||1;
+    const x=(e.clientX-r.left)/s;
+    const y=(e.clientY-r.top)/s;
+    stage.style.setProperty("--mx",x+"px");
+    stage.style.setProperty("--my",y+"px");
+    stage.style.setProperty("--px",((x/1280)-0.5).toFixed(3));
+    stage.style.setProperty("--py",((y/720)-0.5).toFixed(3));
+  }
+};
+addEventListener("mousemove",wake);
+wake();
+go((parseInt(location.hash.slice(1))||1)-1);
+</script>
+</body>
+</html>
